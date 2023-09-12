@@ -120,18 +120,18 @@ class App {
 
     document
       .getElementById('meal-form')
-      .addEventListener('submit', this._newMeal.bind(this));
+      .addEventListener('submit', this._newItem.bind(this, 'meal'));
     document
       .getElementById('workout-form')
-      .addEventListener('submit', this._newWorkout.bind(this));
+      .addEventListener('submit', this._newItem.bind(this, 'workout'));
   }
 
   // Add New Meal
-  _newMeal(e) {
+  _newItem(type, e) {
     e.preventDefault();
 
-    const name = document.getElementById('meal-name');
-    const calories = document.getElementById('meal-calories');
+    const name = document.getElementById(`${type}-name`);
+    const calories = document.getElementById(`${type}-calories`);
 
     // validation
     if (name.value === '' || calories.value === '') {
@@ -139,43 +139,21 @@ class App {
       return;
     }
 
-    const meal = new Meal(name.value, +calories.value);
-
-    this._tracker.addMeal(meal);
-
-    name.value = '';
-    calories.value = '';
-
-    const collapseMeal = document.getElementById('collapse-meal');
-    const bsCollapse = new bootstrap.Collapse(collapseMeal, {
-      toggle: true,
-    });
-  }
-
-  // Add New Workout
-  _newWorkout(e) {
-    e.preventDefault();
-
-    const name = document.getElementById('workout-name');
-    const calories = document.getElementById('workout-calories');
-
-    // validation
-    if (name.value === '' || calories.value === '') {
-      alert('Plz fill in all fields');
-      return;
+    if (type === 'meal') {
+      const meal = new Meal(name.value, +calories.value);
+      this._tracker.addMeal(meal);
+    } else {
+      const workout = new Workouts(name.value, +calories.value);
+      this._tracker.addWorkout(workout);
     }
 
-    const workout = new Workouts(name.value, +calories.value);
-
-    this._tracker.addWorkout(workout);
-
-    const collapseWorkout = document.getElementById('collapse-workout');
-    const bsCollapse = new bootstrap.Collapse(collapseWorkout, {
-      toggle: true,
-    });
-
     name.value = '';
     calories.value = '';
+
+    const collapseItem = document.getElementById(`collapse-${type}`);
+    const bsCollapse = new bootstrap.Collapse(collapseItem, {
+      toggle: true,
+    });
   }
 }
 const app = new App();
